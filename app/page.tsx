@@ -25,6 +25,16 @@ interface PlanResult {
   meals: number;
 }
 
+type Particle = {
+  id: number;
+  dx: number;
+  dy: number;
+  size: number;
+  delay: number;
+  rotation: number;
+  color: string;
+};
+
 function calculatePlan({ age, heightCm, weightKg, sex, activityLevel, goal, numMeals }: {
   age: number;
   heightCm: number;
@@ -99,6 +109,25 @@ const defaultForm: FormState = {
   meals: "4",
 };
 
+function makeParticles(count = 38): Particle[] {
+  const colors = ["#f2d0c4", "#824e1a", "#c2b6c1", "#f5f3ef"];
+  return Array.from({ length: count }, (_, id) => {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 170 + Math.random() * 180;
+    const dx = Math.cos(angle) * speed;
+    const dy = Math.sin(angle) * speed;
+    return {
+      id,
+      dx,
+      dy,
+      size: 8 + Math.random() * 10,
+      delay: Math.random() * 200,
+      rotation: Math.random() * 360,
+      color: colors[id % colors.length],
+    };
+  });
+}
+
 function useGoalCopy(goal: "" | "lose" | "maintain" | "gain") {
   return useMemo(() => {
     if (goal === "lose") {
@@ -134,12 +163,17 @@ export default function Home() {
   const [form, setForm] = useState<FormState>(defaultForm);
   const [plan, setPlan] = useState<PlanResult | null>(null);
   const [error, setError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   const goalCopy = useGoalCopy(form.goal);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+    setCelebrate(false);
+    setIsSubmitting(true);
 
     const age = Number(form.age);
     const heightCm = Number(form.height);
@@ -160,12 +194,14 @@ export default function Home() {
     ) {
       setPlan(null);
       setError("Please fill in all fields before generating your plan.");
+      setIsSubmitting(false);
       return;
     }
 
     if (age < 14 || age > 90) {
       setPlan(null);
       setError("This calculator is intended for ages between 14 and 90.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -179,7 +215,22 @@ export default function Home() {
       numMeals: meals,
     });
 
-    setPlan(planResult);
+    // Simple loading/celebration flow
+    setTimeout(() => {
+      setPlan(planResult);
+      setIsSubmitting(false);
+      setParticles(makeParticles());
+      setCelebrate(true);
+      setTimeout(() => setCelebrate(false), 2400);
+      requestAnimationFrame(() => {
+        const resultsEl = document.getElementById("results");
+        resultsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      setTimeout(() => {
+        const resultsEl = document.getElementById("results");
+        resultsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    }, 500);
   };
 
   const planVisible = Boolean(plan);
@@ -227,55 +278,57 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="hero-card" aria-hidden="true">
-              <div className="coach-photo">
-                <Image
-                  src="/coach.jpg"
-                  alt="Coach in the gym"
-                  width={720}
-                  height={820}
-                  priority
-                  className="coach-photo-img"
-                />
-              </div>
+            <div className="hero-side">
+              <div className="hero-card" aria-hidden="true">
+                <div className="coach-photo">
+                  <Image
+                    src="/coach.jpg"
+                    alt="Coach in the gym"
+                    width={720}
+                    height={820}
+                    priority
+                    className="coach-photo-img"
+                  />
+                </div>
 
-              <div className="hero-card-label">Sample output · For demo only</div>
-              <div className="hero-card-number">
-                2,200<span>kcal / day</span>
-              </div>
-              <div className="hero-card-pill">
-                <span>Goal:</span> <strong>Lean recomposition</strong>
-              </div>
-              <div className="hero-card-divider"></div>
-              <div className="hero-card-row">
-                <div>
-                  Maintenance
-                  <br />
-                  <span className="value">2,500 kcal</span>
+                <div className="hero-card-label">Sample output · For demo only</div>
+                <div className="hero-card-number">
+                  2,200<span>kcal / day</span>
                 </div>
-                <div>
-                  Target
-                  <br />
-                  <span className="value">2,200 kcal</span>
+                <div className="hero-card-pill">
+                  <span>Goal:</span> <strong>Lean recomposition</strong>
                 </div>
+                <div className="hero-card-divider"></div>
+                <div className="hero-card-row">
+                  <div>
+                    Maintenance
+                    <br />
+                    <span className="value">2,500 kcal</span>
+                  </div>
+                  <div>
+                    Target
+                    <br />
+                    <span className="value">2,200 kcal</span>
+                  </div>
+                </div>
+                <div className="hero-card-divider"></div>
+                <div className="hero-card-row">
+                  <div>
+                    Daily macros
+                    <br />
+                    <span className="value">165P · 248C · 61F</span>
+                  </div>
+                  <div>
+                    Per meal (4x)
+                    <br />
+                    <span className="value">41P · 62C · 15F</span>
+                  </div>
+                </div>
+                <p className="hero-card-note">
+                  You’ll get <strong>your own</strong> numbers based on your data — this is just a
+                  preview of what the calculator returns.
+                </p>
               </div>
-              <div className="hero-card-divider"></div>
-              <div className="hero-card-row">
-                <div>
-                  Daily macros
-                  <br />
-                  <span className="value">165P · 248C · 61F</span>
-                </div>
-                <div>
-                  Per meal (4x)
-                  <br />
-                  <span className="value">41P · 62C · 15F</span>
-                </div>
-              </div>
-              <p className="hero-card-note">
-                You’ll get <strong>your own</strong> numbers based on your data — this is just a
-                preview of what the calculator returns.
-              </p>
             </div>
           </div>
         </div>
@@ -295,28 +348,25 @@ export default function Home() {
 
           <div className="steps-grid">
             <div className="step-card">
-              <div className="step-pill">Step 1</div>
-              <h3 className="step-title">Tell the basics</h3>
-              <p className="step-text">
-                Enter your age, height, weight, sex, activity level and goal (fat loss, maintenance
-                or muscle gain).
-              </p>
+              <div className="step-top">
+                <div className="step-pill">Step 1</div>
+                <h3 className="step-title">Tell the basics</h3>
+              </div>
+              <p className="step-text">Enter age, height, weight, sex, activity, and goal.</p>
             </div>
             <div className="step-card">
-              <div className="step-pill">Step 2</div>
-              <h3 className="step-title">We crunch the numbers</h3>
-              <p className="step-text">
-                We calculate your maintenance calories using the Mifflin–St Jeor equation, then
-                adjust them for your goal.
-              </p>
+              <div className="step-top">
+                <div className="step-pill">Step 2</div>
+                <h3 className="step-title">We crunch the numbers</h3>
+              </div>
+              <p className="step-text">We find maintenance and nudge up/down for your goal.</p>
             </div>
             <div className="step-card">
-              <div className="step-pill">Step 3</div>
-              <h3 className="step-title">Get daily & per-meal macros</h3>
-              <p className="step-text">
-                You get daily calories, macros (protein, carbs, fats) and a 4–5 meal split so you can
-                start today.
-              </p>
+              <div className="step-top">
+                <div className="step-pill">Step 3</div>
+                <h3 className="step-title">Get your numbers</h3>
+              </div>
+              <p className="step-text">See calories, macros, and per-meal split to start today.</p>
             </div>
           </div>
         </div>
@@ -484,8 +534,8 @@ export default function Home() {
 
                 <div className="calc-footer">
                   <button type="submit" className="btn-primary">
-                    <span>Generate My DIY Plan</span>
-                    <span className="icon">⚡</span>
+                    <span>{isSubmitting ? "Crunching…" : "Generate My DIY Plan"}</span>
+                    <span className="icon">{isSubmitting ? "⏳" : "⚡"}</span>
                   </button>
                   <p className="calc-note">
                     Safety guardrails: the calculator will not recommend very low calories (below
@@ -497,6 +547,31 @@ export default function Home() {
 
             {/* RESULTS */}
             <div id="results" className={`results-card ${planVisible ? "" : "hidden"}`} aria-live="polite">
+              {isSubmitting && (
+                <div className="loading-overlay" aria-hidden>
+                  <div className="spinner" />
+                  <span className="loading-text">Calculating your plan…</span>
+                </div>
+              )}
+              {celebrate && (
+                <div className="confetti-burst" aria-hidden>
+                  {particles.map((p) => (
+                    <div
+                      key={p.id}
+                      className="particle"
+                      style={{
+                        "--dx": `${p.dx}px`,
+                        "--dy": `${p.dy}px`,
+                        "--size": `${p.size}px`,
+                        "--delay": `${p.delay}ms`,
+                        "--rot": `${p.rotation}deg`,
+                        "--color": p.color,
+                      } as React.CSSProperties}
+                    />
+                  ))}
+                </div>
+              )}
+
               <div className="results-tag">Your DIY plan</div>
               <div className="results-title">
                 Daily targets for <span id="goalLabel">{goalCopy.label}</span>
