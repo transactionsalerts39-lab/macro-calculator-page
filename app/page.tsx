@@ -159,7 +159,7 @@ function useGoalCopy(goal: "" | "lose" | "maintain" | "gain") {
 }
 
 export default function Home() {
-  const calculatorRef = useRef<HTMLElement | null>(null);
+  const heroFormRef = useRef<HTMLDivElement | null>(null);
   const [form, setForm] = useState<FormState>(defaultForm);
   const [plan, setPlan] = useState<PlanResult | null>(null);
   const [error, setError] = useState<string>("");
@@ -262,7 +262,7 @@ export default function Home() {
                 <button
                   className="btn-primary"
                   type="button"
-                  onClick={() => calculatorRef.current?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() => heroFormRef.current?.scrollIntoView({ behavior: "smooth" })}
                 >
                   <span>Start My DIY Plan</span>
                   <span className="icon">↘</span>
@@ -276,10 +276,182 @@ export default function Home() {
                 <strong> simple, sustainable fat loss & muscle gain</strong>—without obsessing over
                 apps all day.
               </p>
+
+              <div className="card hero-form" ref={heroFormRef}>
+                <form id="calculator-form" autoComplete="off" onSubmit={handleSubmit}>
+                  <div className="calc-form-grid">
+                    <div className="field">
+                      <label htmlFor="age">Age</label>
+                      <input
+                        className="input"
+                        id="age"
+                        name="age"
+                        type="number"
+                        min="14"
+                        max="90"
+                        inputMode="numeric"
+                        placeholder="28"
+                        required
+                        value={form.age}
+                        onChange={(e) => setForm((prev) => ({ ...prev, age: e.target.value }))}
+                      />
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="sex">Sex</label>
+                      <select
+                        className="select"
+                        id="sex"
+                        name="sex"
+                        required
+                        value={form.sex}
+                        onChange={(e) =>
+                          setForm((prev) => ({ ...prev, sex: e.target.value as FormState["sex"] }))
+                        }
+                      >
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="height">Height (cm)</label>
+                      <input
+                        className="input"
+                        id="height"
+                        name="height"
+                        type="number"
+                        min="120"
+                        max="220"
+                        inputMode="decimal"
+                        placeholder="175"
+                        required
+                        value={form.height}
+                        onChange={(e) => setForm((prev) => ({ ...prev, height: e.target.value }))}
+                      />
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="weight">Weight (kg)</label>
+                      <input
+                        className="input"
+                        id="weight"
+                        name="weight"
+                        type="number"
+                        min="35"
+                        max="180"
+                        inputMode="decimal"
+                        placeholder="72"
+                        required
+                        value={form.weight}
+                        onChange={(e) => setForm((prev) => ({ ...prev, weight: e.target.value }))}
+                      />
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="activity">Activity</label>
+                      <select
+                        className="select"
+                        id="activity"
+                        name="activity"
+                        required
+                        value={form.activity}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            activity: e.target.value as FormState["activity"],
+                          }))
+                        }
+                      >
+                        <option value="">Select</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="goal">Goal</label>
+                      <select
+                        className="select"
+                        id="goal"
+                        name="goal"
+                        required
+                        value={form.goal}
+                        onChange={(e) =>
+                          setForm((prev) => ({ ...prev, goal: e.target.value as FormState["goal"] }))
+                        }
+                      >
+                        <option value="">Select</option>
+                        <option value="lose">Lose fat</option>
+                        <option value="maintain">Maintain</option>
+                        <option value="gain">Gain muscle</option>
+                      </select>
+                    </div>
+
+                    <div className="field">
+                      <label htmlFor="meals">Meals/day</label>
+                      <select
+                        className="select"
+                        id="meals"
+                        name="meals"
+                        required
+                        value={form.meals}
+                        onChange={(e) =>
+                          setForm((prev) => ({ ...prev, meals: e.target.value as FormState["meals"] }))
+                        }
+                      >
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div id="error" className={`error-text ${error ? "" : "hidden"}`}>
+                    {error}
+                  </div>
+
+                  <div className="calc-footer">
+                    <button type="submit" className="btn-primary">
+                      <span>{isSubmitting ? "Crunching…" : "Generate My DIY Plan"}</span>
+                      <span className="icon">{isSubmitting ? "⏳" : "⚡"}</span>
+                    </button>
+                    <p className="calc-note">
+                      Safety guardrails: will not recommend very low calories (below
+                      ~1,200 for women / 1,500 for men).
+                    </p>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <div className="hero-side">
-              <div className="hero-card" aria-hidden="true">
+              <div className="hero-card" aria-live="polite" id="results">
+                {isSubmitting && (
+                  <div className="loading-overlay" aria-hidden>
+                    <div className="spinner" />
+                    <span className="loading-text">Calculating…</span>
+                  </div>
+                )}
+                {celebrate && (
+                  <div className="confetti-burst" aria-hidden>
+                    {particles.map((p) => (
+                      <div
+                        key={p.id}
+                        className="particle"
+                        style={{
+                          "--dx": `${p.dx}px`,
+                          "--dy": `${p.dy}px`,
+                          "--size": `${p.size}px`,
+                          "--delay": `${p.delay}ms`,
+                          "--rot": `${p.rotation}deg`,
+                          "--color": p.color,
+                        } as React.CSSProperties}
+                      />
+                    ))}
+                  </div>
+                )}
                 <div className="coach-photo">
                   <Image
                     src="/coach.jpg"
@@ -291,43 +463,64 @@ export default function Home() {
                   />
                 </div>
 
-                <div className="hero-card-label">Sample output · For demo only</div>
-                <div className="hero-card-number">
-                  2,200<span>kcal / day</span>
-                </div>
-                <div className="hero-card-pill">
-                  <span>Goal:</span> <strong>Lean recomposition</strong>
-                </div>
-                <div className="hero-card-divider"></div>
-                <div className="hero-card-row">
-                  <div>
-                    Maintenance
-                    <br />
-                    <span className="value">2,500 kcal</span>
-                  </div>
-                  <div>
-                    Target
-                    <br />
-                    <span className="value">2,200 kcal</span>
-                  </div>
-                </div>
-                <div className="hero-card-divider"></div>
-                <div className="hero-card-row">
-                  <div>
-                    Daily macros
-                    <br />
-                    <span className="value">165P · 248C · 61F</span>
-                  </div>
-                  <div>
-                    Per meal (4x)
-                    <br />
-                    <span className="value">41P · 62C · 15F</span>
-                  </div>
-                </div>
-                <p className="hero-card-note">
-                  You’ll get <strong>your own</strong> numbers based on your data — this is just a
-                  preview of what the calculator returns.
-                </p>
+                {planVisible ? (
+                  <>
+                    <div className="hero-card-label">Your DIY plan</div>
+                    <div className="hero-card-number">
+                      {formatNumber(plan?.target)}<span>kcal / day</span>
+                    </div>
+                    <div className="hero-card-pill">
+                      <span>Goal:</span> <strong>{goalCopy.label}</strong>
+                    </div>
+                    <div className="hero-card-divider"></div>
+                    <div className="hero-card-row">
+                      <div>
+                        Maintenance
+                        <br />
+                        <span className="value">{formatNumber(plan?.maintenance)} kcal</span>
+                      </div>
+                      <div>
+                        Target
+                        <br />
+                        <span className="value">{formatNumber(plan?.target)} kcal</span>
+                      </div>
+                    </div>
+                    <div className="hero-card-divider"></div>
+                    <div className="hero-card-row">
+                      <div>
+                        Daily macros
+                        <br />
+                        <span className="value">
+                          {formatNumber(plan?.proteinGrams)}P · {formatNumber(plan?.carbGrams)}C ·
+                          {formatNumber(plan?.fatGrams)}F
+                        </span>
+                      </div>
+                      <div>
+                        Per meal ({mealsLabel}x)
+                        <br />
+                        <span className="value">
+                          {formatNumber(plan?.proteinPerMeal)}P · {formatNumber(plan?.carbsPerMeal)}C ·
+                          {formatNumber(plan?.fatsPerMeal)}F
+                        </span>
+                      </div>
+                    </div>
+                    <p className="hero-card-note">
+                      These numbers are calculated from your inputs — start with these targets.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="hero-card-label">Your coach</div>
+                    <div className="hero-card-number">Shrutika Mathur</div>
+                    <div className="hero-card-pill">
+                      <span>Nutrition & training</span> <strong>Coach</strong>
+                    </div>
+                    <p className="hero-card-note">
+                      Shrutika coaches busy people toward sustainable fat loss, strength, and better
+                      food habits with simple, realistic plans.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -367,270 +560,6 @@ export default function Home() {
                 <h3 className="step-title">Get your numbers</h3>
               </div>
               <p className="step-text">See calories, macros, and per-meal split to start today.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CALCULATOR + RESULTS */}
-      <section id="calculator" ref={calculatorRef}>
-        <div className="container">
-          <div className="section-header">
-            <div className="section-eyebrow">DIY calculator</div>
-            <h2 className="section-title">Build your calorie & macro plan</h2>
-            <p className="section-sub">
-              Fill in your details below. The numbers you see are an educated starting point — not
-              strict rules. Adjust based on your progress and how you feel.
-            </p>
-          </div>
-
-          <div className="calc-layout">
-            {/* FORM */}
-            <div className="card">
-              <form id="calculator-form" autoComplete="off" onSubmit={handleSubmit}>
-                <div className="calc-form-grid">
-                  <div className="field">
-                    <label htmlFor="age">Age (years)</label>
-                    <input
-                      className="input"
-                      id="age"
-                      name="age"
-                      type="number"
-                      min="14"
-                      max="90"
-                      inputMode="numeric"
-                      placeholder="e.g. 28"
-                      required
-                      value={form.age}
-                      onChange={(e) => setForm((prev) => ({ ...prev, age: e.target.value }))}
-                    />
-                    <small>Use full years.</small>
-                  </div>
-
-                  <div className="field">
-                    <label htmlFor="sex">Sex</label>
-                    <select
-                      className="select"
-                      id="sex"
-                      name="sex"
-                      required
-                      value={form.sex}
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, sex: e.target.value as FormState["sex"] }))
-                      }
-                    >
-                      <option value="">Select</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                    </select>
-                    <small>Affects your base metabolism.</small>
-                  </div>
-
-                  <div className="field">
-                    <label htmlFor="height">Height (cm)</label>
-                    <input
-                      className="input"
-                      id="height"
-                      name="height"
-                      type="number"
-                      min="120"
-                      max="220"
-                      inputMode="decimal"
-                      placeholder="e.g. 175"
-                      required
-                      value={form.height}
-                      onChange={(e) => setForm((prev) => ({ ...prev, height: e.target.value }))}
-                    />
-                    <small>If you use ft/inches, convert to cm first.</small>
-                  </div>
-
-                  <div className="field">
-                    <label htmlFor="weight">Weight (kg)</label>
-                    <input
-                      className="input"
-                      id="weight"
-                      name="weight"
-                      type="number"
-                      min="35"
-                      max="180"
-                      inputMode="decimal"
-                      placeholder="e.g. 72"
-                      required
-                      value={form.weight}
-                      onChange={(e) => setForm((prev) => ({ ...prev, weight: e.target.value }))}
-                    />
-                    <small>Use your current weight.</small>
-                  </div>
-
-                  <div className="field">
-                    <label htmlFor="activity">Activity level</label>
-                    <select
-                      className="select"
-                      id="activity"
-                      name="activity"
-                      required
-                      value={form.activity}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          activity: e.target.value as FormState["activity"],
-                        }))
-                      }
-                    >
-                      <option value="">Select</option>
-                      <option value="low">Low – Mostly sitting, little/no exercise</option>
-                      <option value="medium">Medium – Desk job + 3–4 workouts/week</option>
-                      <option value="high">High – Active job or intense training</option>
-                    </select>
-                  </div>
-
-                  <div className="field">
-                    <label htmlFor="goal">Primary goal</label>
-                    <select
-                      className="select"
-                      id="goal"
-                      name="goal"
-                      required
-                      value={form.goal}
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, goal: e.target.value as FormState["goal"] }))
-                      }
-                    >
-                      <option value="">Select</option>
-                      <option value="lose">Lose weight / reduce fat</option>
-                      <option value="maintain">Maintain weight</option>
-                      <option value="gain">Gain weight / build muscle</option>
-                    </select>
-                  </div>
-
-                  <div className="field field-row-full">
-                    <label htmlFor="meals">Meals per day</label>
-                    <select
-                      className="select"
-                      id="meals"
-                      name="meals"
-                      required
-                      value={form.meals}
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, meals: e.target.value as FormState["meals"] }))
-                      }
-                    >
-                      <option value="4">4 meals per day</option>
-                      <option value="5">5 meals per day</option>
-                    </select>
-                    <small>Choose what fits your lifestyle — not what looks “perfect”.</small>
-                  </div>
-                </div>
-
-                <div className="help-row">
-                  <strong>What this does:</strong> calculates your maintenance calories, adjusts them
-                  by your goal, then splits calories into 30% protein, 45% carbs, 25% fats and
-                  divides across 4–5 meals.
-                </div>
-
-                <div id="error" className={`error-text ${error ? "" : "hidden"}`}>
-                  {error}
-                </div>
-
-                <div className="calc-footer">
-                  <button type="submit" className="btn-primary">
-                    <span>{isSubmitting ? "Crunching…" : "Generate My DIY Plan"}</span>
-                    <span className="icon">{isSubmitting ? "⏳" : "⚡"}</span>
-                  </button>
-                  <p className="calc-note">
-                    Safety guardrails: the calculator will not recommend very low calories (below
-                    ~1,200 for women / 1,500 for men).
-                  </p>
-                </div>
-              </form>
-            </div>
-
-            {/* RESULTS */}
-            <div id="results" className={`results-card ${planVisible ? "" : "hidden"}`} aria-live="polite">
-              {isSubmitting && (
-                <div className="loading-overlay" aria-hidden>
-                  <div className="spinner" />
-                  <span className="loading-text">Calculating your plan…</span>
-                </div>
-              )}
-              {celebrate && (
-                <div className="confetti-burst" aria-hidden>
-                  {particles.map((p) => (
-                    <div
-                      key={p.id}
-                      className="particle"
-                      style={{
-                        "--dx": `${p.dx}px`,
-                        "--dy": `${p.dy}px`,
-                        "--size": `${p.size}px`,
-                        "--delay": `${p.delay}ms`,
-                        "--rot": `${p.rotation}deg`,
-                        "--color": p.color,
-                      } as React.CSSProperties}
-                    />
-                  ))}
-                </div>
-              )}
-
-              <div className="results-tag">Your DIY plan</div>
-              <div className="results-title">
-                Daily targets for <span id="goalLabel">{goalCopy.label}</span>
-              </div>
-
-              <div className="results-grid">
-                <div className="results-block">
-                  <div className="results-label">Maintenance calories</div>
-                  <div className="results-value">
-                    <span id="maintenanceCalories">{formatNumber(plan?.maintenance)}</span>
-                    <span className="unit">kcal / day</span>
-                  </div>
-                  <div className="results-subtext">
-                    Approx. calories to maintain your current weight with your activity level.
-                  </div>
-                </div>
-
-                <div className="results-block">
-                  <div className="results-label">Target calories</div>
-                  <div className="results-value">
-                    <span id="targetCalories">{formatNumber(plan?.target)}</span>
-                    <span className="unit">kcal / day</span>
-                  </div>
-                  <div className="results-subtext" id="targetExplanation">
-                    {goalCopy.explanation}
-                  </div>
-                </div>
-
-                <div className="results-block">
-                  <div className="results-label">Daily macros</div>
-                  <div className="results-value">
-                    <span id="dailyProtein">{formatNumber(plan?.proteinGrams)}</span>P ·
-                    <span id="dailyCarbs"> {formatNumber(plan?.carbGrams)}</span>C ·
-                    <span id="dailyFats"> {formatNumber(plan?.fatGrams)}</span>F
-                  </div>
-                  <div className="results-subtext">
-                    Based on ~30% protein, 45% carbs, 25% fats of your target calories.
-                  </div>
-                </div>
-
-                <div className="results-block">
-                  <div className="results-label">
-                    Per-meal (~<span id="mealsPerDayLabel">{mealsLabel}</span>x / day)
-                  </div>
-                  <div className="results-value">
-                    <span id="perMealProtein">{formatNumber(plan?.proteinPerMeal)}</span>P ·
-                    <span id="perMealCarbs"> {formatNumber(plan?.carbsPerMeal)}</span>C ·
-                    <span id="perMealFats"> {formatNumber(plan?.fatsPerMeal)}</span>F
-                  </div>
-                  <div className="results-subtext">
-                    If most meals land roughly near these numbers, you’re doing great.
-                  </div>
-                </div>
-              </div>
-
-              <div className="results-footnote">
-                Tip: for fat loss, aim to <strong>hit protein first</strong>, then fill the rest of
-                your calories with mostly whole-food carbs and fats you enjoy.
-              </div>
             </div>
           </div>
         </div>
@@ -734,8 +663,9 @@ export default function Home() {
                 <div className="avatar"></div>
                 <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                   <p>
-                    Hi, I’m <strong>[Your Name]</strong>. I help busy people lose fat, gain strength
-                    and build a better relationship with food using simple, sustainable methods.
+                    Hi, I’m <strong>Shrutika Mathur</strong>. I help busy people lose fat, gain
+                    strength and build a better relationship with food using simple, sustainable
+                    methods.
                   </p>
                   <p>
                     I created this DIY planner so you don’t have to guess your calories or macros
