@@ -419,18 +419,14 @@ export default function Home() {
                   </div>
 
                   <div className="calc-footer">
-                    <button type="submit" className="btn-primary">
-                      <span>{isSubmitting ? "Crunching…" : "Generate My DIY Plan"}</span>
-                      <span className="icon">{isSubmitting ? "⏳" : "⚡"}</span>
-                    </button>
-                    <p className="calc-note">
-                      Safety guardrails: will not recommend very low calories (below
-                      ~1,200 for women / 1,500 for men).
-                    </p>
-                  </div>
-                </form>
-              </div>
+                  <button type="submit" className="btn-primary">
+                    <span>{isSubmitting ? "Crunching…" : "Generate My DIY Plan"}</span>
+                    <span className="icon">{isSubmitting ? "⏳" : "⚡"}</span>
+                  </button>
+                </div>
+              </form>
             </div>
+          </div>
 
             <div className="hero-side">
               <div className="hero-card coach-card">
@@ -593,12 +589,6 @@ export default function Home() {
         </div>
       </section>
 
-      <footer>
-        <div className="container">
-          DIY Calorie &amp; Macro Planner · Built by [Your Name].
-          <br />Editable Next.js app — deploy to Vercel and tweak anything you like.
-        </div>
-      </footer>
     </div>
   );
 }
