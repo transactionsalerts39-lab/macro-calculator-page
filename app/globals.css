@@ -74,6 +74,7 @@ body {
 @media (max-width: 840px) {
   .hero-inner {
     grid-template-columns: minmax(0, 1fr);
+    gap: 1.2rem;
   }
 }
 
@@ -224,6 +225,21 @@ body {
   opacity: 0.9;
 }
 
+.coach-card {
+  margin-bottom: 1rem;
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -311,6 +327,59 @@ body {
   margin-top: 0.5rem;
   font-size: 0.7rem;
   color: var(--text-muted);
+}
+
+.results-section {
+  padding: 0.4rem 0 0.8rem;
+}
+
+.results-section .container {
+  display: flex;
+  justify-content: center;
+}
+
+.results-card {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  animation: floatUp 0.45s ease;
+}
+
+.results-card-label {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
+}
+
+.results-card-number {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.results-card-number span {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-left: 0.35rem;
+}
+
+.results-card-pill {
+  display: inline-flex;
+  gap: 0.45rem;
+  padding: 0.42rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 208, 196, 0.38);
+  background: rgba(49, 35, 53, 0.95);
+  font-size: 0.75rem;
+  margin-top: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.results-card-pill strong {
+  color: var(--accent-strong);
 }
 
 /* SECTIONS */
@@ -869,6 +938,33 @@ section {
   border-radius: 999px;
   background: radial-gradient(circle at top, #f2d0c4, #5b2655);
   border: 2px solid rgba(242, 208, 196, 0.65);
+}
+
+.about-copy {
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.about-copy p {
+  margin: 0 0 0.9rem;
+}
+
+.about-copy ul {
+  margin: 0.2rem 0 0.9rem;
+  padding-left: 1.2rem;
+  color: var(--text-main);
+}
+
+.coach-pointers {
+  list-style: disc;
+}
+
+.coach-pointers li {
+  margin: 0.2rem 0;
+}
+
+.coach-pointers li::marker {
+  color: var(--accent);
 }
 
 .faq-list {

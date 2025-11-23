@@ -109,6 +109,9 @@ const defaultForm: FormState = {
   meals: "4",
 };
 
+const instagramHandle = "shruti_fit";
+const instagramDMUrl = `https://ig.me/m/${instagramHandle}?text=Fit`;
+
 function makeParticles(count = 38): Particle[] {
   const colors = ["#f2d0c4", "#824e1a", "#c2b6c1", "#f5f3ef"];
   return Array.from({ length: count }, (_, id) => {
@@ -226,10 +229,6 @@ export default function Home() {
         const resultsEl = document.getElementById("results");
         resultsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
-      setTimeout(() => {
-        const resultsEl = document.getElementById("results");
-        resultsEl?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 150);
     }, 500);
   };
 
@@ -427,31 +426,7 @@ export default function Home() {
             </div>
 
             <div className="hero-side">
-              <div className="hero-card" aria-live="polite" id="results">
-                {isSubmitting && (
-                  <div className="loading-overlay" aria-hidden>
-                    <div className="spinner" />
-                    <span className="loading-text">Calculating…</span>
-                  </div>
-                )}
-                {celebrate && (
-                  <div className="confetti-burst" aria-hidden>
-                    {particles.map((p) => (
-                      <div
-                        key={p.id}
-                        className="particle"
-                        style={{
-                          "--dx": `${p.dx}px`,
-                          "--dy": `${p.dy}px`,
-                          "--size": `${p.size}px`,
-                          "--delay": `${p.delay}ms`,
-                          "--rot": `${p.rotation}deg`,
-                          "--color": p.color,
-                        } as React.CSSProperties}
-                      />
-                    ))}
-                  </div>
-                )}
+              <div className="hero-card coach-card">
                 <div className="coach-photo">
                   <Image
                     src="/coach.jpg"
@@ -463,69 +438,96 @@ export default function Home() {
                   />
                 </div>
 
-                {planVisible ? (
-                  <>
-                    <div className="hero-card-label">Your DIY plan</div>
-                    <div className="hero-card-number">
-                      {formatNumber(plan?.target)}<span>kcal / day</span>
-                    </div>
-                    <div className="hero-card-pill">
-                      <span>Goal:</span> <strong>{goalCopy.label}</strong>
-                    </div>
-                    <div className="hero-card-divider"></div>
-                    <div className="hero-card-row">
-                      <div>
-                        Maintenance
-                        <br />
-                        <span className="value">{formatNumber(plan?.maintenance)} kcal</span>
-                      </div>
-                      <div>
-                        Target
-                        <br />
-                        <span className="value">{formatNumber(plan?.target)} kcal</span>
-                      </div>
-                    </div>
-                    <div className="hero-card-divider"></div>
-                    <div className="hero-card-row">
-                      <div>
-                        Daily macros
-                        <br />
-                        <span className="value">
-                          {formatNumber(plan?.proteinGrams)}P · {formatNumber(plan?.carbGrams)}C ·
-                          {formatNumber(plan?.fatGrams)}F
-                        </span>
-                      </div>
-                      <div>
-                        Per meal ({mealsLabel}x)
-                        <br />
-                        <span className="value">
-                          {formatNumber(plan?.proteinPerMeal)}P · {formatNumber(plan?.carbsPerMeal)}C ·
-                          {formatNumber(plan?.fatsPerMeal)}F
-                        </span>
-                      </div>
-                    </div>
-                    <p className="hero-card-note">
-                      These numbers are calculated from your inputs — start with these targets.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="hero-card-label">Your coach</div>
-                    <div className="hero-card-number">Shrutika Mathur</div>
-                    <div className="hero-card-pill">
-                      <span>Nutrition & training</span> <strong>Coach</strong>
-                    </div>
-                    <p className="hero-card-note">
-                      Shrutika coaches busy people toward sustainable fat loss, strength, and better
-                      food habits with simple, realistic plans.
-                    </p>
-                  </>
-                )}
+                <div className="hero-card-label">Your coach</div>
+                <div className="hero-card-number">Shrutika Mathur</div>
+                <div className="hero-card-pill">
+                  <span>Nutrition & training</span> <strong>Coach</strong>
+                </div>
+                <p className="hero-card-note">
+                  Helping busy professionals achieve their dream bodies.
+                  <br />
+                  No fad diets. No detoxes. No nonsense
+                </p>
               </div>
             </div>
           </div>
         </div>
       </header>
+
+      {(planVisible || isSubmitting) && (
+        <section className="results-section">
+          <div className="container">
+            <div className="hero-card results-card" aria-live="polite" id="results">
+              {isSubmitting && (
+                <div className="loading-overlay" aria-hidden>
+                  <div className="spinner" />
+                  <span className="loading-text">Calculating…</span>
+                </div>
+              )}
+              {celebrate && (
+                <div className="confetti-burst" aria-hidden>
+                  {particles.map((p) => (
+                    <div
+                      key={p.id}
+                      className="particle"
+                      style={{
+                        "--dx": `${p.dx}px`,
+                        "--dy": `${p.dy}px`,
+                        "--size": `${p.size}px`,
+                        "--delay": `${p.delay}ms`,
+                        "--rot": `${p.rotation}deg`,
+                        "--color": p.color,
+                      } as React.CSSProperties}
+                    />
+                  ))}
+                </div>
+              )}
+              <div className="results-card-label">Your DIY plan</div>
+              <div className="results-card-number">
+                {formatNumber(plan?.target)} <span>kcal / day</span>
+              </div>
+              <div className="results-card-pill">
+                <span>Goal:</span> <strong>{goalCopy.label}</strong>
+              </div>
+              <div className="hero-card-divider"></div>
+              <div className="hero-card-row">
+                <div>
+                  Maintenance
+                  <br />
+                  <span className="value">{formatNumber(plan?.maintenance)} kcal</span>
+                </div>
+                <div>
+                  Target
+                  <br />
+                  <span className="value">{formatNumber(plan?.target)} kcal</span>
+                </div>
+              </div>
+              <div className="hero-card-divider"></div>
+              <div className="hero-card-row">
+                <div>
+                  Daily macros
+                  <br />
+                  <span className="value">
+                    {formatNumber(plan?.proteinGrams)}P · {formatNumber(plan?.carbGrams)}C ·{" "}
+                    {formatNumber(plan?.fatGrams)}F
+                  </span>
+                </div>
+                <div>
+                  Per meal ({mealsLabel}x)
+                  <br />
+                  <span className="value">
+                    {formatNumber(plan?.proteinPerMeal)}P · {formatNumber(plan?.carbsPerMeal)}C ·{" "}
+                    {formatNumber(plan?.fatsPerMeal)}F
+                  </span>
+                </div>
+              </div>
+              <p className="hero-card-note">
+                These numbers are calculated from your inputs — start with these targets.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* HOW IT WORKS */}
       <section>
@@ -661,74 +663,25 @@ export default function Home() {
 
               <div style={{ display: "flex", gap: "0.8rem", alignItems: "flex-start" }}>
                 <div className="avatar"></div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                <div className="about-copy">
                   <p>
-                    Hi, I’m <strong>Shrutika Mathur</strong>. I help busy people lose fat, gain
-                    strength and build a better relationship with food using simple, sustainable
-                    methods.
+                    A national-level athlete with 10+ years of experience in the fitness industry,
+                    Shrutika has helped 1500+ clients towards:
                   </p>
+                  <ul className="coach-pointers">
+                    <li>Sustainable fat loss</li>
+                    <li>Strength gains</li>
+                    <li>Better food habits</li>
+                    <li>Mindset shift</li>
+                  </ul>
                   <p>
-                    I created this DIY planner so you don’t have to guess your calories or macros
-                    anymore. Use it as a clear starting point, then adjust based on <em>your</em> life,
-                    not someone else’s routine.
+                    If you’re a busy professional/ corporate employee and want to improve your
+                    fitness without derailing your routine, reach out &amp; know more about plans.
                   </p>
-                  <p>
-                    If you ever want help turning these numbers into a complete weekly meal and
-                    training plan, scroll down and reach out.
-                  </p>
-                  <span className="chip">No fad diets · No detoxes · No nonsense</span>
                 </div>
               </div>
             </div>
 
-            <div>
-              <div className="section-header">
-                <div className="section-eyebrow">FAQ</div>
-                <h2 className="section-title">Common questions</h2>
-              </div>
-
-              <div className="faq-list">
-                <div className="faq-item">
-                  <div className="faq-q">Is this 100% accurate?</div>
-                  <div className="faq-a">
-                    No calculator is perfect. This uses widely accepted formulas to give you an
-                    educated estimate. Your progress over 3–4 weeks tells us if we need small tweaks.
-                  </div>
-                </div>
-
-                <div className="faq-item">
-                  <div className="faq-q">Do I have to hit these numbers exactly?</div>
-                  <div className="faq-a">
-                    No. Think of them as <em>targets</em>, not strict rules. Being roughly close most
-                    days is enough for progress.
-                  </div>
-                </div>
-
-                <div className="faq-item">
-                  <div className="faq-q">Can I use this if I have medical conditions?</div>
-                  <div className="faq-a">
-                    If you have medical conditions, take medication, are pregnant or have a history of
-                    eating disorders, please speak to your doctor or a registered dietitian before
-                    making big changes.
-                  </div>
-                </div>
-
-                <div className="faq-item">
-                  <div className="faq-q">How fast will I see results?</div>
-                  <div className="faq-a">
-                    That depends on your consistency, sleep, stress, training and genetics. Most
-                    people start noticing changes in 4–8 weeks when they follow a realistic plan
-                    consistently.
-                  </div>
-                </div>
-              </div>
-
-              <div className="disclaimer">
-                This calculator is for educational purposes only and is not medical or dietetic
-                advice. Always consult with a healthcare professional before making major changes to
-                your diet, training or lifestyle.
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -737,18 +690,19 @@ export default function Home() {
       <section>
         <div className="container">
           <div className="final-cta">
-            <h2>Want help turning this into a full plan?</h2>
+            <h2>Need a plan built around your workday?</h2>
             <p>
-              If you’d like a 100% customized plan based on your results, schedule, and food
-              preferences, I can help you shortcut the guesswork.
+              If you’re a busy professional/ corporate employee and want to improve your fitness
+              without derailing your routine, reach out &amp; know more about plans.
             </p>
-            <button className="btn-primary" type="button">
-              <span>Screenshot &amp; DM Me Your Results</span>
+            <p style={{ fontWeight: 600, marginTop: "0.4rem" }}>DM “Fit” to join.</p>
+            <a className="btn-primary" href={instagramDMUrl} target="_blank" rel="noreferrer">
+              <span>Tap to open Instagram &amp; DM “Fit”</span>
               <span className="icon">📲</span>
-            </button>
+            </a>
             <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.6rem" }}>
-              Action step: take a screenshot of your numbers, then DM them to me on Instagram
-              <strong> @yourhandle</strong> with your main goal.
+              Tap the button to open Instagram with <strong>@{instagramHandle}</strong> and send
+              “Fit.” I’ll reply with plan options tailored to your schedule and goals.
             </p>
           </div>
         </div>
