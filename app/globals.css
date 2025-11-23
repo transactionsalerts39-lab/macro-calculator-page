@@ -130,6 +130,28 @@ body {
   margin-bottom: 1.3rem;
 }
 
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 208, 196, 0.35);
+  background: linear-gradient(145deg, #2b1f2f, #201726);
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.6rem;
+}
+
+.hero-pill.alt {
+  background: linear-gradient(145deg, #302336, #1d1626);
+}
+
+.hero-pill .dot {
+  color: rgba(242, 208, 196, 0.65);
+}
+
 .hero-side {
   max-width: 440px;
   margin-left: auto;

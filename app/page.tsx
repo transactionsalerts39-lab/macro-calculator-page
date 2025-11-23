@@ -270,6 +270,13 @@ export default function Home() {
                   Takes under <strong>30 seconds</strong>. You stay in control.
                 </span>
               </div>
+              <div className="hero-pill alt">
+                <span>No fad diets</span>
+                <span className="dot">·</span>
+                <span>No detoxes</span>
+                <span className="dot">·</span>
+                <span>No nonsense</span>
+              </div>
               <p className="hero-trust">
                 Built for busy people who want
                 <strong> simple, sustainable fat loss & muscle gain</strong>—without obsessing over
