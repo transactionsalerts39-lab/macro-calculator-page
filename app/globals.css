@@ -138,18 +138,36 @@ body {
   border-radius: 999px;
   border: 1px solid rgba(242, 208, 196, 0.35);
   background: linear-gradient(145deg, #2b1f2f, #201726);
-  color: var(--text-muted);
-  font-weight: 600;
+  color: var(--text-main);
+  font-weight: 700;
   letter-spacing: 0.01em;
   margin-bottom: 0.6rem;
 }
 
 .hero-pill.alt {
-  background: linear-gradient(145deg, #302336, #1d1626);
+  background: linear-gradient(120deg, rgba(242, 208, 196, 0.14), rgba(49, 35, 53, 0.85));
+  border-color: rgba(242, 208, 196, 0.45);
+  box-shadow: 0 12px 32px rgba(12, 4, 9, 0.5);
+  animation: pillGlow 3s ease-in-out infinite;
 }
 
 .hero-pill .dot {
   color: rgba(242, 208, 196, 0.65);
+}
+
+@keyframes pillGlow {
+  0% {
+    box-shadow: 0 12px 32px rgba(12, 4, 9, 0.45), 0 0 0 0 rgba(242, 208, 196, 0.12);
+    background-position: 0% 50%;
+  }
+  50% {
+    box-shadow: 0 16px 40px rgba(12, 4, 9, 0.6), 0 0 0 10px rgba(242, 208, 196, 0.04);
+    background-position: 100% 50%;
+  }
+  100% {
+    box-shadow: 0 12px 32px rgba(12, 4, 9, 0.45), 0 0 0 0 rgba(242, 208, 196, 0.12);
+    background-position: 0% 50%;
+  }
 }
 
 .hero-side {
