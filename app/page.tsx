@@ -529,44 +529,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* HOW IT WORKS */}
-      <section>
-        <div className="container">
-          <div className="section-header">
-            <div className="section-eyebrow">How it works</div>
-            <h2 className="section-title">3 steps to your DIY eating blueprint</h2>
-            <p className="section-sub">
-              No guesswork, no magic foods. Just clear numbers you can plug into the way you already
-              like to eat.
-            </p>
-          </div>
-
-          <div className="steps-grid">
-            <div className="step-card">
-              <div className="step-top">
-                <div className="step-pill">Step 1</div>
-                <h3 className="step-title">Tell the basics</h3>
-              </div>
-              <p className="step-text">Enter age, height, weight, sex, activity, and goal.</p>
-            </div>
-            <div className="step-card">
-              <div className="step-top">
-                <div className="step-pill">Step 2</div>
-                <h3 className="step-title">We crunch the numbers</h3>
-              </div>
-              <p className="step-text">We find maintenance and nudge up/down for your goal.</p>
-            </div>
-            <div className="step-card">
-              <div className="step-top">
-                <div className="step-pill">Step 3</div>
-                <h3 className="step-title">Get your numbers</h3>
-              </div>
-              <p className="step-text">See calories, macros, and per-meal split to start today.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ABOUT / FAQ */}
       <section>
         <div className="container">
